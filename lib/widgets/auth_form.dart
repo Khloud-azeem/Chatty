@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
 class AuthForm extends StatefulWidget {
-  AuthForm(this.submitFn, {Key? key}) : super(key: key);
-
+  AuthForm(this.submitFn, this.isLoading, {Key? key}) : super(key: key);
+  var isLoading = false;
   final void Function(
     String email,
     String password,
     String username,
     bool isLogin,
+    BuildContext context,
   ) submitFn;
 
   @override
@@ -22,11 +23,20 @@ class _AuthFormState extends State<AuthForm> {
   String _username = '';
 
   _trySubmit() {
-    final isValid = _formKey.currentState!.validate();
     FocusScope.of(context).unfocus();
+    setState(() {
+      widget.isLoading = true;
+    });
+    final isValid = _formKey.currentState!.validate();
     if (isValid) {
       _formKey.currentState!.save();
-      widget.submitFn(_userEmail, _userPassword, _username, _isLogin);
+      widget.submitFn(
+        _userEmail.trim(),
+        _userPassword.trim(),
+        _username.trim(),
+        _isLogin,
+        context,
+      );
     }
   }
 
@@ -83,20 +93,23 @@ class _AuthFormState extends State<AuthForm> {
               SizedBox(
                 height: 13,
               ),
-              ElevatedButton(
-                onPressed: () {},
-                child: Text('Login'),
-              ),
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    _isLogin = !_isLogin;
-                  });
-                },
-                child: Text(_isLogin
-                    ? 'Create an account'
-                    : 'Have an account? Login instead'),
-              ),
+              if (widget.isLoading) CircularProgressIndicator(),
+              if (!widget.isLoading)
+                ElevatedButton(
+                  onPressed: _trySubmit,
+                  child: Text(_isLogin ? 'Login' : 'Create account'),
+                ),
+              if (!widget.isLoading)
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _isLogin = !_isLogin;
+                    });
+                  },
+                  child: Text(_isLogin
+                      ? 'Create an account'
+                      : 'Have an account? Login instead'),
+                ),
             ]),
           ),
         )),

@@ -1,4 +1,4 @@
-import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -16,6 +16,41 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Chats'),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(13.0),
+            child: DropdownButton(
+              items: [
+                DropdownMenuItem(
+                  child: Container(
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.exit_to_app,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        SizedBox(width: 13),
+                        Text('Sign Out'),
+                      ],
+                    ),
+                  ),
+                  value: 'sign out',
+                ),
+              ],
+              onChanged: (itemId) {
+                if (itemId == 'sign out') {
+                  FirebaseAuth.instance.signOut();
+                }
+              },
+              elevation: 5,
+              isDense: true,
+              icon: Icon(
+                Icons.more_vert,
+                color: Colors.white,
+              ),
+            ),
+          )
+        ],
       ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance.collection('messages').snapshots(),
@@ -34,14 +69,6 @@ class _ChatScreenState extends State<ChatScreen> {
                   streamSnapshot.data!.docs[index].data().toString(),
                 ));
               }));
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () {
-          FirebaseFirestore.instance
-              .collection('messages')
-              .add({'timestamp': Timestamp.fromDate(DateTime.now())});
         },
       ),
     );
