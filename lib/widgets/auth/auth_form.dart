@@ -1,3 +1,4 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 
 class AuthForm extends StatefulWidget {
@@ -24,9 +25,6 @@ class _AuthFormState extends State<AuthForm> {
 
   _trySubmit() {
     FocusScope.of(context).unfocus();
-    setState(() {
-      widget.isLoading = true;
-    });
     final isValid = _formKey.currentState!.validate();
     if (isValid) {
       _formKey.currentState!.save();
@@ -37,6 +35,9 @@ class _AuthFormState extends State<AuthForm> {
         _isLogin,
         context,
       );
+      setState(() {
+        widget.isLoading = true;
+      });
     }
   }
 
@@ -54,9 +55,10 @@ class _AuthFormState extends State<AuthForm> {
               TextFormField(
                 key: Key('email'),
                 validator: (value) {
-                  if (value!.isEmpty) {
-                    return null;
+                  if (!EmailValidator.validate(value as String)) {
+                    return "This email isn't valid.";
                   }
+                  return null;
                 },
                 onSaved: (value) {
                   _userEmail = value!;
@@ -67,11 +69,12 @@ class _AuthFormState extends State<AuthForm> {
               if (!_isLogin)
                 TextFormField(
                   key: Key('username'),
-                  validator: ((value) {
-                    if (value!.isEmpty) {
-                      return null;
+                  validator: (value) {
+                    if (value!.isEmpty || value.length < 3) {
+                      return "This username isn't valid.";
                     }
-                  }),
+                    return null;
+                  },
                   onSaved: (value) {
                     _username = value!;
                   },
@@ -80,9 +83,10 @@ class _AuthFormState extends State<AuthForm> {
               TextFormField(
                 key: Key('password'),
                 validator: (value) {
-                  if (value!.isEmpty) {
-                    return null;
+                  if (value!.isEmpty || value.length < 7) {
+                    return "This password isn't valid.";
                   }
+                  return null;
                 },
                 onSaved: (value) {
                   _userPassword = value!;

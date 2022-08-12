@@ -1,5 +1,4 @@
-import 'package:chatty/screens/chat_screen.dart';
-import 'package:chatty/widgets/auth_form.dart';
+import 'package:chatty/widgets/auth/auth_form.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +26,9 @@ class _AuthScreenState extends State<AuthScreen> {
       if (isLogin) {
         authResult = await _auth.signInWithEmailAndPassword(
             email: email, password: password);
+        setState(() {
+          isLoading = false;
+        });
       } else {
         authResult = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
@@ -37,17 +39,15 @@ class _AuthScreenState extends State<AuthScreen> {
           'username': username,
           'email': email,
         });
+        setState(() {
+          isLoading = false;
+        });
       }
-      // Navigator.of(context).push(MaterialPageRoute(
-      //   builder: (context) {
-      //     return ChatScreen();
-      //   },
-      // ));
     } on FirebaseAuthException catch (error) {
       setState(() {
         isLoading = false;
       });
-      var msg = 'Please check your credentials';
+      var msg = 'Please check your credentials.';
       if (error.message != null) msg = error.message!;
       Scaffold.of(context).showSnackBar(SnackBar(content: Text(msg)));
     } catch (error) {
@@ -55,8 +55,7 @@ class _AuthScreenState extends State<AuthScreen> {
         isLoading = false;
       });
       var msg = 'Something went wrong! Try again';
-      Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text(error.toString())));
+      Scaffold.of(context).showSnackBar(SnackBar(content: Text(msg)));
     }
   }
 
