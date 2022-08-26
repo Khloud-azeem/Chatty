@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:chatty/widgets/auth/auth_form.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -19,6 +22,7 @@ class _AuthScreenState extends State<AuthScreen> {
     String password,
     String username,
     bool isLogin,
+    String photoPath,
     BuildContext context,
   ) async {
     try {
@@ -32,12 +36,21 @@ class _AuthScreenState extends State<AuthScreen> {
       } else {
         authResult = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
+
+        final ref = FirebaseStorage.instance
+            .ref()
+            .child("user_images")
+            .child("${_auth.currentUser!.uid}.jpg");
+
+        await ref.putFile(File(photoPath)).then((p0) => null);
+        final photoUrl = await ref.getDownloadURL();
+
         await FirebaseFirestore.instance
             .collection('users')
             .doc(authResult.user!.uid)
             .set({
           'username': username,
-          'email': email,
+          'photoUrl': photoUrl,
         });
         setState(() {
           isLoading = false;

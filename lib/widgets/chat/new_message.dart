@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 class NewMessage extends StatefulWidget {
@@ -12,13 +13,24 @@ class NewMessage extends StatefulWidget {
 class _NewMessageState extends State<NewMessage> {
   String _enteredMsg = '';
   final _controller = TextEditingController();
+    final _auth = FirebaseAuth.instance;
+
+  Future<String> getPhotoUrl() async {
+    final photoUrl = await FirebaseStorage.instance
+        .ref()
+        .child("user_images")
+        .child("${_auth.currentUser!.uid}.jpg")
+        .getDownloadURL();
+    return photoUrl;
+  }
 
   void _sendMsg() async {
-    _controller.clear();
     final _userData = await FirebaseFirestore.instance
         .collection('/users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .get();
+    _controller.clear();
+
     FirebaseFirestore.instance.collection('/messages').add({
       "text": _enteredMsg,
       "createdAt": Timestamp.now(),
@@ -39,6 +51,8 @@ class _NewMessageState extends State<NewMessage> {
         children: [
           Expanded(
             child: TextField(
+              autofocus: true,
+              textCapitalization: TextCapitalization.sentences,
               controller: _controller,
               decoration: InputDecoration(hintText: 'Send a message...'),
               onChanged: (value) {

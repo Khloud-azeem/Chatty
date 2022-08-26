@@ -13,14 +13,17 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
-    // Firebase.initializeApp();
     return Scaffold(
         appBar: AppBar(
-          title: Text('Chats'),
+          title: Text(
+            'MAIN CHAT',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
           actions: [
             Padding(
               padding: const EdgeInsets.all(13.0),
               child: DropdownButton(
+                underline: Container(),
                 items: [
                   DropdownMenuItem(
                     child: Container(

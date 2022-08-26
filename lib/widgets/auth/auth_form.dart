@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:chatty/widgets/auth/profile_photo.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 
@@ -9,6 +12,7 @@ class AuthForm extends StatefulWidget {
     String password,
     String username,
     bool isLogin,
+    String path,
     BuildContext context,
   ) submitFn;
 
@@ -22,10 +26,20 @@ class _AuthFormState extends State<AuthForm> {
   String _userEmail = '';
   String _userPassword = '';
   String _username = '';
+  String _photoPath = '';
+
+  void pickImage(String path) {
+    _photoPath = path;
+  }
 
   _trySubmit() {
     FocusScope.of(context).unfocus();
     final isValid = _formKey.currentState!.validate();
+    if (!_isLogin && _photoPath.isEmpty) {
+      Scaffold.of(context)
+          .showSnackBar(SnackBar(content: Text("No photo selected.")));
+      return;
+    }
     if (isValid) {
       _formKey.currentState!.save();
       widget.submitFn(
@@ -33,6 +47,7 @@ class _AuthFormState extends State<AuthForm> {
         _userPassword.trim(),
         _username.trim(),
         _isLogin,
+        _photoPath,
         context,
       );
       setState(() {
@@ -52,6 +67,7 @@ class _AuthFormState extends State<AuthForm> {
           child: Form(
             key: _formKey,
             child: Column(mainAxisSize: MainAxisSize.min, children: [
+              if (!_isLogin) ProfilePhoto(pickImage),
               TextFormField(
                 key: Key('email'),
                 validator: (value) {
