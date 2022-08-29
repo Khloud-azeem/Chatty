@@ -13,16 +13,16 @@ class NewMessage extends StatefulWidget {
 class _NewMessageState extends State<NewMessage> {
   String _enteredMsg = '';
   final _controller = TextEditingController();
-    final _auth = FirebaseAuth.instance;
+  // final _auth = FirebaseAuth.instance;
 
-  Future<String> getPhotoUrl() async {
-    final photoUrl = await FirebaseStorage.instance
-        .ref()
-        .child("user_images")
-        .child("${_auth.currentUser!.uid}.jpg")
-        .getDownloadURL();
-    return photoUrl;
-  }
+  // Future<String> getPhotoUrl() async {
+  //   final photoUrl = await FirebaseStorage.instance
+  //       .ref()
+  //       .child("user_images")
+  //       .child("${_auth.currentUser!.uid}.jpg")
+  //       .getDownloadURL();
+  //   return photoUrl;
+  // }
 
   void _sendMsg() async {
     final _userData = await FirebaseFirestore.instance

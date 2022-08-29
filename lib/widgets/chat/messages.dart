@@ -17,14 +17,14 @@ class Messages extends StatefulWidget {
 class _MessagesState extends State<Messages> {
   final _user = FirebaseAuth.instance.currentUser;
 
-  Future<String> getPhotoUrl() async {
-    final photoUrl = await FirebaseStorage.instance
-        .ref()
-        .child("user_images")
-        .child("${_user!.uid}.jpg")
-        .getDownloadURL();
-    return photoUrl;
-  }
+  // Future<String> getPhotoUrl() async {
+  //   final photoUrl = await FirebaseStorage.instance
+  //       .ref()
+  //       .child("user_images")
+  //       .child("${_user!.uid}.jpg")
+  //       .getDownloadURL();
+  //   return photoUrl;
+  // }
 
   @override
   Widget build(BuildContext context) {

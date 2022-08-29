@@ -1,6 +1,7 @@
 import 'package:chatty/widgets/chat/messages.dart';
 import 'package:chatty/widgets/chat/new_message.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -12,11 +13,18 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   @override
+  void initState() {
+    final messaging = FirebaseMessaging.instance;
+    messaging.subscribeToTopic('chat');
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           title: Text(
-            'MAIN CHAT',
+            'CHATTY',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           actions: [
